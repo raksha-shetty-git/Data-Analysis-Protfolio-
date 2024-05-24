@@ -1,0 +1,378 @@
+-- Objective:The objective of this dataset is to facilitate various analyses and queries related to employee management within an organization. 
+-- It encompasses information about employees, their departments, projects they are assigned to, their salaries, educational background, attendance, leaves taken, and work locations. 
+-- By querying this dataset, one can gain insights into employee demographics, departmental performance, project allocation, salary distributions, tax deductions, and other HR-related metrics.
+
+-- Learning Opportunities:
+-- Analyzing this dataset offers a range of learning opportunities in SQL, including but not limited to:
+-- Data Retrieval: Master the art of retrieving specific data from multiple tables using various SQL commands such as SELECT, JOIN, WHERE, and ORDER BY.
+-- Data Aggregation: Learn how to aggregate data using functions like COUNT, SUM, AVG, and GROUP BY to derive meaningful insights from large datasets.
+-- Data Filtering: Practice filtering data based on specific criteria using conditions and logical operators in SQL queries.
+-- Data Modification: Gain experience in modifying existing data by inserting, updating, or deleting records as required.
+-- Data Analysis: Explore techniques for analyzing HR-related metrics such as employee demographics, departmental performance, project allocation, salary distributions, tax deductions, leave patterns, and attendance records.
+-- Data Integrity: Understand the importance of maintaining data integrity through foreign key constraints and referential integrity to ensure consistency and accuracy in the database.
+-- Performance Optimization: Learn strategies for optimizing SQL queries to enhance query performance and reduce execution time, especially for complex queries involving multiple joins and aggregations.
+
+Create Database Emp_Payroll;
+USE Emp_Payroll;
+
+CREATE TABLE Employee(
+  Employee_Id INT NOT NULL,
+  First_Name VARCHAR(25),
+  Last_Name VARCHAR(25),
+  Hire_Date DATE,
+  City VARCHAR(25),
+  State VARCHAR(25),
+  CONSTRAINT EMPLOYEE_PK PRIMARY KEY (Employee_Id));
+  
+  INSERT INTO Employee (Employee_Id, First_Name, Last_name, Hire_Date, City, State)
+ VALUES (101,'Ojas','Phansekar','2016-04-14','New York City','New York'),
+(102,'Vrushali','Patil','2018-06-21','Boston','Massachusetts'),
+(103,'Pratik','Parija','2019-09-13','Chicago','Illinois'),
+(104,'Chetan','Mistry','2011-04-12','Miami','Florida'),
+(105,'Anugraha','Varkey','2017-08-16','Atlanta','Georgia'),
+(106,'Rasagnya','Reddy','2018-07-25','San Mateo','California'),
+(107,'Aishwarya','Boralkar','2010-12-18','San Francisco','California'),
+(108,'Shantanu','Savant','2015-11-27','Seattle','Washington'),
+(109,'Kalpita','Malvankar','2016-04-24','Boston','Massachusetts'),
+(110,'Saylee','Bhagat','2014-05-21','San Francisco','California');
+
+Select*from Employee;
+
+  CREATE TABLE Department(
+  Department_Id INT NOT NULL,
+  Department_Name VARCHAR(30),
+  CONSTRAINT DEPARTMENT_PK PRIMARY KEY (Department_Id)
+  );
+  
+INSERT INTO Department VALUES (1,'Human Resources');
+INSERT INTO Department VALUES (2,'Software Development');
+INSERT INTO Department VALUES (3,'Data Analysis');
+INSERT INTO Department VALUES (4,'Data Science');
+INSERT INTO Department VALUES (5,'Business Intelligence');
+INSERT INTO Department VALUES (6,'Data Engineering');
+INSERT INTO Department VALUES (7,'Manufacturing');
+INSERT INTO Department VALUES (8,'Quality Control');
+
+Select*from department;
+
+  
+  CREATE TABLE Salary(
+  Salary_Id INT NOT NULL,
+  Gross_Salary INT NOT NULL,
+  Hourly_Pay INT NOT NULL,
+  State_Tax INT NOT NULL,
+  Federal_Tax INT NOT NULL,
+  Account_Id INT NOT NULL,
+  CONSTRAINT SALARY_PK PRIMARY KEY (Salary_Id),
+  FOREIGN KEY (Account_Id)
+        REFERENCES ACCOUNTDETAILS(Account_Id)
+  );
+  
+INSERT INTO Salary VALUES (1,57600,30,200,1000,40);
+INSERT INTO Salary VALUES (2,76800,40,300,1300,41);
+INSERT INTO Salary VALUES (3,96000,50,400,1500,42);
+INSERT INTO Salary VALUES (4,115200,60,500,1700,43);
+INSERT INTO Salary VALUES (5,57600,30,200,1000,44);
+INSERT INTO Salary VALUES (6,76800,40,300,1300,45);
+INSERT INTO Salary VALUES (7,96000,50,400,1500,46);
+INSERT INTO Salary VALUES (8,115200,60,500,1700,47);
+INSERT INTO Salary VALUES (9,57600,30,200,1000,48);
+INSERT INTO Salary VALUES (10,76800,40,300,1300,49);
+
+  
+  CREATE TABLE DepartmentProject(
+  Department_Id INT NOT NULL,
+  Project_Id INT NOT NULL,
+  CONSTRAINT DEPTPROJECT_PK PRIMARY KEY (Department_Id,Project_Id),
+  FOREIGN KEY (Department_Id)
+        REFERENCES Department(Department_Id),
+  FOREIGN KEY (Project_Id)
+        REFERENCES Project(Project_Id)
+  );
+  
+INSERT INTO DepartmentProject VALUES (1,21);
+INSERT INTO DepartmentProject VALUES (2,22);
+INSERT INTO DepartmentProject VALUES (3,23);
+INSERT INTO DepartmentProject VALUES (4,24);
+INSERT INTO DepartmentProject VALUES (5,25);
+INSERT INTO DepartmentProject VALUES (6,26);
+INSERT INTO DepartmentProject VALUES (7,21);
+INSERT INTO DepartmentProject VALUES (8,24);
+ 
+  CREATE TABLE Project(
+  Project_Id INT NOT NULL,
+  Project_Name VARCHAR(50),
+  Project_Description VARCHAR(50),
+  CONSTRAINT Project_PK PRIMARY KEY (Project_Id)
+  );
+  
+INSERT INTO Project VALUES (21,'Dev','Whatever');
+INSERT INTO Project VALUES (22,'Prod','do something');
+INSERT INTO Project VALUES (23,'Test','focus');
+INSERT INTO Project VALUES (24,'Nothing','do nothing');
+INSERT INTO Project VALUES (25,'Research','focus on everything');
+INSERT INTO Project VALUES (26,'Next Steps','find some way out');
+
+Select*from project;
+  
+  CREATE TABLE AccountDetails(
+  Account_Id INT NOT NULL,
+  Bank_Name VARCHAR(50),
+  Account_Number VARCHAR(50),
+  Employee_Id INT NOT NULL,
+  CONSTRAINT Account_PK PRIMARY KEY (Account_Id),
+  FOREIGN KEY (Employee_Id)
+        REFERENCES Employee(Employee_Id)
+  );
+  
+INSERT INTO AccountDetails VALUES (40,'Santander','S12344',101);
+INSERT INTO AccountDetails VALUES (41,'Santander','S12345',102);
+INSERT INTO AccountDetails VALUES (42,'Santander','S12346',103);
+INSERT INTO AccountDetails VALUES (43,'Santander','S12347',104);
+INSERT INTO AccountDetails VALUES (44,'Chase','C12344',105);
+INSERT INTO AccountDetails VALUES (45,'Chase','C12345',106);
+INSERT INTO AccountDetails VALUES (46,'Chase','C12347',107);
+INSERT INTO AccountDetails VALUES (47,'Chase','C12334',108);
+INSERT INTO AccountDetails VALUES (48,'BOFA','C12378',109);
+INSERT INTO AccountDetails VALUES (49,'BOFA','C12390',110);
+ 
+ 
+ select*from AccountDetails;
+
+  CREATE TABLE Education(
+  Education_Id INT NOT NULL,
+  Employee_Id INT NOT NULL,
+  Degree VARCHAR(30),
+  Graduation_Year INT(4) NOT NULL,
+  CONSTRAINT Location_PK PRIMARY KEY (Education_Id),
+  FOREIGN KEY (Employee_Id)
+        REFERENCES Employee(Employee_Id)
+  );
+  
+INSERT INTO Education VALUES (10,101,'MS',2017);
+INSERT INTO Education VALUES (11,102,'MS',2019);
+INSERT INTO Education VALUES (12,104,'MS',2011);
+INSERT INTO Education VALUES (13,108,'MS',2015);
+INSERT INTO Education VALUES (14,109,'Bachelor',2013);
+INSERT INTO Education VALUES (15,107,'Bachelor',2008);
+INSERT INTO Education VALUES (16,106,'Bachelor',2007);
+
+Select*from education;
+  
+  CREATE TABLE Leaves (
+  Leave_Id INT NOT NULL,
+  Employee_Id INT NOT NULL,
+  Leave_date DATE,
+  CONSTRAINT Leave_PK PRIMARY KEY (Leave_Id),
+  FOREIGN KEY (Employee_Id)
+        REFERENCES Employee(Employee_Id)
+  );
+  
+INSERT INTO Leaves VALUES (51,104, '2019-12-01');
+INSERT INTO Leaves VALUES (52,108, '2019-12-02');
+INSERT INTO Leaves VALUES (53,109, '2019-12-03');
+INSERT INTO Leaves VALUES (54,107, '2019-12-04');
+INSERT INTO Leaves VALUES (55,106, '2019-12-05');
+INSERT INTO Leaves VALUES (56,104, '2019-12-06');
+INSERT INTO Leaves VALUES (57,108, '2019-12-07');
+INSERT INTO Leaves VALUES (58,109, '2019-12-07');
+INSERT INTO Leaves VALUES (59,107, '2019-12-08');
+INSERT INTO Leaves VALUES (60,106, '2019-12-09');
+
+Select* from leaves;
+
+  
+  CREATE TABLE Employee_Attendance(
+  Employee_Id INT NOT NULL,
+  Attendance_Id INT NOT NULL,
+  CONSTRAINT DEPARTMENTPROJECT_PK PRIMARY KEY (Employee_Id,Attendance_Id),
+  FOREIGN KEY (Employee_Id)
+        REFERENCES Employee(Employee_Id),
+  FOREIGN KEY (Attendance_Id)
+        REFERENCES Attendance(Attendance_Id)
+  );
+  
+Select*from Employee_Attendance;
+   
+  CREATE TABLE Attendance(
+  Attendance_Id INT NOT NULL,
+  Hours_Worked INT NOT NULL,
+  CONSTRAINT Attendance_PK PRIMARY KEY (Attendance_Id)
+  );
+
+INSERT INTO Employee_Attendance VALUES (101,90);
+INSERT INTO Employee_Attendance VALUES (102,91);
+INSERT INTO Employee_Attendance VALUES (103,92);
+INSERT INTO Employee_Attendance VALUES (104,93);
+INSERT INTO Employee_Attendance VALUES (105,94);
+INSERT INTO Employee_Attendance VALUES (106,95);
+INSERT INTO Employee_Attendance VALUES (107,96);
+INSERT INTO Employee_Attendance VALUES (108,91);
+INSERT INTO Employee_Attendance VALUES (109,92);
+INSERT INTO Employee_Attendance VALUES (110,93);
+  
+  CREATE TABLE Work_Location(
+  Location_Id INT NOT NULL,
+  Location VARCHAR(25),
+  Number_Of_Employees INT NOT NULL,
+  City VARCHAR(25),
+  State VARCHAR(25),
+  CONSTRAINT Loc_PK PRIMARY KEY (Location_Id)
+  );
+  
+INSERT INTO Work_Location VALUES (71,'North',4,'New York City','New York',101);
+INSERT INTO Work_Location VALUES (72,'North',4,'Boston','Massachusetts',102);
+INSERT INTO Work_Location VALUES (73,'North',4,'Chicago','Illinois',103);
+INSERT INTO Work_Location VALUES (74,'North',89,'Miami','Florida',104);
+INSERT INTO Work_Location VALUES (75,'South',90,'Atlanta','Georgia',105);
+INSERT INTO Work_Location VALUES (76,'South',100,'San Mateo','California',106);
+INSERT INTO Work_Location VALUES (77,'South',4,'San Francisco','California',107);
+INSERT INTO Work_Location VALUES (78,'South',2,'Seattle','Washington',108);
+INSERT INTO Work_Location VALUES (79,'South',25,'Alpharetta','Georgia',109);
+INSERT INTO Work_Location VALUES (80,'South',20,'Keene','New Hampshire',110);
+INSERT INTO Work_Location VALUES (81,'South',22,'Hampton','New Hampshire',109);
+
+CREATE TABLE Salary_External (
+  Salary_Id INT,
+  Gross_Salary DECIMAL(10,2),
+  Hourly_Pay DECIMAL(10,2),
+  State_Tax DECIMAL(10,2),
+  Federal_Tax DECIMAL(10,2),
+  Account_Id INT
+);
+
+
+INSERT INTO Salary_External (Salary_Id, Gross_Salary, Hourly_Pay, State_Tax, Federal_Tax, Account_Id)
+VALUES 
+    (4, 55000.00, 27.00, 5500.00, 11000.00, 104),
+    (5, 62000.00, 31.00, 6200.00, 12400.00, 105),
+    (6, 72000.00, 36.00, 7200.00, 14400.00, 106),
+    (7, 50000.00, 25.00, 5000.00, 10000.00, 107),
+    (8, 60000.00, 30.00, 6000.00, 12000.00, 108),
+    (9, 70000.00, 35.00, 7000.00, 14000.00, 109);
+
+-- Retrieve the names of employees who have a gross salary between $50,000 and $70,000
+
+SELECT First_Name, Last_Name
+FROM Employee
+WHERE Employee_Id IN (
+    SELECT Employee_Id
+    FROM AccountDetails
+    WHERE Account_Id IN (
+        SELECT Account_Id
+        FROM Salary
+        WHERE Gross_Salary BETWEEN 50000 AND 70000
+    )
+);
+
+-- List the employees who have the same first name.
+SELECT First_Name, COUNT(*) AS Name_Count
+FROM Employee
+GROUP BY First_Name
+HAVING COUNT(*) > 1;
+
+-- Retrieve employees who have worked more than 40 hours in total across all attendance records.
+SELECT e.First_Name, e.Last_Name
+FROM Employee e
+JOIN Employee_Attendance ea ON e.Employee_Id = ea.Employee_Id
+JOIN Attendance a ON ea.Attendance_Id = a.Attendance_Id
+GROUP BY e.Employee_Id
+HAVING SUM(a.Hours_Worked) > 40;
+
+-- Find the average hourly pay of employees who graduated before 2015.
+SELECT AVG(s.Hourly_Pay) AS Avg_Hourly_Pay
+FROM Employee e
+JOIN AccountDetails a ON e.Employee_Id = a.Employee_Id
+JOIN Salary s ON a.Account_Id = s.Account_Id
+JOIN Education ed ON e.Employee_Id = ed.Employee_Id
+WHERE ed.Graduation_Year < 2015;
+
+
+-- List employees who have worked more than 8 hours in any attendance record.
+SELECT e.First_Name, e.Last_Name
+FROM Employee e
+JOIN Employee_Attendance ea ON e.Employee_Id = ea.Employee_Id
+JOIN Attendance a ON ea.Attendance_Id = a.Attendance_Id
+WHERE a.Hours_Worked > 8;
+
+-- Find the employee with the highest gross salary.
+SELECT First_Name, Last_Name
+FROM Employee e
+JOIN AccountDetails a ON e.Employee_Id = a.Employee_Id
+JOIN Salary s ON a.Account_Id = s.Account_Id
+ORDER BY s.Gross_Salary DESC
+LIMIT 1;
+
+-- Find the total number of projects assigned to each department.
+SELECT d.Department_Name, COUNT(DISTINCT dp.Project_Id) AS Total_Projects
+FROM Department d
+LEFT JOIN DepartmentProject dp ON d.Department_Id = dp.Department_Id
+GROUP BY d.Department_Name;
+
+-- List all employees who have not taken any leaves.
+SELECT First_Name, Last_Name
+FROM Employee
+WHERE Employee_Id NOT IN (
+    SELECT DISTINCT Employee_Id
+    FROM Leaves
+);
+
+-- Retrieve the top 5 departments with the highest total state tax amount.
+SELECT Department_Name, SUM(State_Tax) AS Total_State_Tax
+FROM Department d
+JOIN Employee e ON d.Department_Id = e.Department_Id
+JOIN AccountDetails a ON e.Employee_Id = a.Employee_Id
+JOIN Salary s ON a.Account_Id = s.Account_Id
+GROUP BY Department_Name
+ORDER BY Total_State_Tax DESC
+LIMIT 5;
+
+-- Find the department with the highest average hourly pay.
+SELECT Department_Name, AVG(Hourly_Pay) AS Avg_Hourly_Pay
+FROM Department d
+JOIN Employee e ON d.Department_Id = e.Department_Id
+JOIN AccountDetails a ON e.Employee_Id = a.Employee_Id
+JOIN Salary s ON a.Account_Id = s.Account_Id
+GROUP BY Department_Name
+ORDER BY Avg_Hourly_Pay DESC
+LIMIT 1;
+
+-- Find the average gross salary of employees in each department.
+SELECT d.Department_Name, AVG(s.Gross_Salary) AS Avg_Gross_Salary
+FROM Department d
+JOIN Employee e ON d.Department_Id = e.Department_Id
+JOIN AccountDetails a ON e.Employee_Id = a.Employee_Id
+JOIN Salary s ON a.Account_Id = s.Account_Id
+GROUP BY d.Department_Name;
+
+-- Find the total number of employees in each state, sorted in descending order of employee count.
+SELECT State, COUNT(*) AS Employee_Count
+FROM Employee
+GROUP BY State
+ORDER BY Employee_Count DESC;
+
+
+-- Find the department with the highest average state tax deducted from salaries.
+
+SELECT d.Department_Name, AVG(s.State_Tax) AS Avg_State_Tax
+FROM Department d
+JOIN Employee e ON d.Department_Id = e.Department_Id
+JOIN AccountDetails a ON e.Employee_Id = a.Employee_Id
+JOIN Salary s ON a.Account_Id = s.Account_Id
+GROUP BY d.Department_Name
+ORDER BY Avg_State_Tax DESC
+LIMIT 1;
+
+-- Retrieve the employee with the highest total tax amount (state tax + federal tax).
+SELECT e.First_Name, e.Last_Name
+FROM Employee e
+JOIN AccountDetails a ON e.Employee_Id = a.Employee_Id
+JOIN Salary s ON a.Account_Id = s.Account_Id
+ORDER BY (s.State_Tax + s.Federal_Tax) DESC
+LIMIT 1;
+
+
+
+
+
+
