@@ -1,0 +1,126 @@
+Write Queries:
+1. To find a book by name or by author.
+2. Build a query to Check the books borrowed by a particular person.
+3. Build a query to check last book taken or returned by a customer.
+4,Build a query for the complete report that shows customer details, book name, author, book id, date issued and date returned.
+
+CREATE DATABASE db_LibraryManagement;
+USE db_LibraryManagement;
+
+CREATE TABLE Member (
+    CustomerID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Email VARCHAR(100),
+    Phone VARCHAR(15)
+);
+
+INSERT into Member (CustomerID, FirstName, LastName,Email, Phone)
+ VALUES (22, 'Olivia', 'Taylor', 'olivia.t@email.com', '111-222-3334'),
+(23, 'Daniel', 'Wilson', 'daniel.w@email.com', '444-555-6667'),
+(24, 'Sophie', 'Brown', 'sophie.b@email.com', '777-888-9998'),
+(25, 'Matthew', 'Martinez', 'matthew.m@email.com', '333-666-9997'),
+(26, 'Grace', 'Jones', 'grace.j@email.com', '111-555-9998'),
+ (27, 'Logan', 'Hill', 'logan.h@email.com', '222-333-4445'),
+(28, 'Ava', 'Morgan', 'ava.m@email.com', '888-777-6667'),
+(29, 'William', 'Harrison', 'william.h@email.com', '999-888-7779'),
+(30, 'Zoe', 'Baker', 'zoe.b@email.com', '555-444-3335'),
+(31, 'Ethan', 'Fisher', 'ethan.f@email.com', '666-444-2223');
+
+SELECT * FROM member;
+
+
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY,
+    Title VARCHAR(100),
+    Author VARCHAR(100),
+    AvailableCopies INT
+);
+
+
+INSERT into books (BookID, Title, Author, AvailableCopies) values
+(101, 'The Great Gatsby', 'F. Scott Fitzgerald', 3),
+(102, 'To Kill a Mockingbird', 'Harper Lee', 2),
+(103, '1984', 'George Orwell', 5),
+(104, 'Pride and Prejudice', 'Jane Austen', 4),
+(105, 'The Catcher in the Rye', 'J.D. Salinger', 3),
+(106, 'The Hobbit', 'J.R.R. Tolkien', 2),
+(107, 'The Lord of the Rings', 'J.R.R. Tolkien', 1),
+(108, 'The Da Vinci Code', 'Dan Brown', 4),
+(109, 'Harry Potter and the Sorcerer''s Stone', 'J.K. Rowling', 3),
+(110, 'The Shining', 'Stephen King', 4);
+
+SELECT * FROM books;
+
+CREATE TABLE Borrowings (
+    BorrowingID INT PRIMARY KEY,
+    CustomerID INT,
+    BookID INT,
+    BorrowDate DATE,
+    ReturnDate DATE,
+    FOREIGN KEY (CustomerID) REFERENCES Member(CustomerID),
+    FOREIGN KEY (BookID) REFERENCES Books(BookID)
+);
+
+
+INSERT
+ into
+ Borrowings(BorrowingID,CustomerID,BookID,BorrowDate,ReturnDate) 
+values
+(3, 22, 101, '2024-01-12','2024-01-25'),
+(4, 23, 102, '2024-01-15', '2024-01-28'),
+(5, 24, 103, '2024-01-20', NULL), -- Not returned yet
+(6, 25, 104,'2024-01-22', NULL), -- Not returned yet
+(7, 26, 105, '2024-01-25', NULL), -- Not returned yet
+(8, 27, 106,'2024-01-28', NULL), -- Not returned yet
+(9, 28, 107, '2024-01-30', NULL), -- Not returned yet
+(10, 29, 108,'2024-02-02', NULL), -- Not returned yet
+(11, 30, 109,'2024-02-05', NULL), -- Not returned yet
+(12, 31, 110, '2024-02-08', NULL);-- Not returned yet
+
+SELECT 
+    *
+FROM
+    Borrowings;
+    
+    
+    -- To find a book by name or by author.    
+ SELECT * 
+FROM Books 
+WHERE Author LIKE '%J.R.R. Tolkien%';
+
+    
+    -- Build a query to Check the books borrowed by a particular person.
+SELECT 
+    firstname, title
+FROM
+    member
+        JOIN
+    Borrowings ON Borrowings.CustomerID = member.CustomerID
+        JOIN
+    books ON Borrowings.BookID = books.BookID;
+    
+    -- Build a query to check last book taken or returned by a customer.
+
+SELECT Books.*, Borrowings.BorrowDate, Borrowings.ReturnDate
+FROM Borrowings
+JOIN Books ON Borrowings.BookID = Books.BookID
+WHERE Borrowings.CustomerID = desired_customer_id
+ORDER BY COALESCE(Borrowings.ReturnDate, Borrowings.BorrowDate) DESC
+LIMIT 1;
+
+
+-- Build a query for the complete report that shows customer details, book name, author, book id, date issued and date returned.
+
+select Member.CustomerID,
+    Member.FirstName,
+    Member.LastName,
+    Member.Email,
+    Member.Phone,
+    Books.BookID,
+    Books.Title AS BookName,
+    Books.Author,
+    Borrowings.BorrowDate AS DateIssued,
+    Borrowings.ReturnDate AS DateReturned from  member
+        JOIN Borrowings ON Borrowings.CustomerID = member.CustomerID
+        JOIN books ON Borrowings.BookID = books.BookID;
