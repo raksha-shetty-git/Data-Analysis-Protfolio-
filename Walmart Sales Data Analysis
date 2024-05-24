@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT exists SalesDataWalmart;
-USE SalesDataWalmart;
+USE SalesDataWalmart; 
 
 CREATE TABLE IF NOT EXISTS SALES (
     invoice_id VARCHAR(50) NOT NULL PRIMARY KEY,
