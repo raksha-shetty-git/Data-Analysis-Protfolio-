@@ -1,0 +1,307 @@
+-- Problem Statement:
+-- You are a database administrator. You want to use the data to answer afewquestions about your customers, especially about the sales and profit comingfrom different states, money spent in marketing and various other factorssuchasCOGS (Cost of Goods Sold), budget profit etc. You plan on using theseinsightsto help find out which items are being sold the most. You have beenprovidedwith the sample of the overall customer data due to privacy issues. But youhopethat these samples are enough for you to write fully functioning SQLqueriestohelp answer the questions.
+
+
+--  Dataset:
+-- The 3 key datasets for this case study:
+-- a. FactTable: The Fact Table has 14 columns mentioned belowand4200rows. Date, ProductID, Profit, Sales, Margin, COGS, Total Expenses, Marketing, Inventory, Budget Profit, Budget COGS, Budget Margin, Budget Sales, and Area Code
+-- Note: COGS stands for Cost of Goods Sold
+-- b. ProductTable: The ProductTable has four columns named Product Type, Product, ProductID, and Type. It has 13 rows which can be brokendowninto further details to retrieve the information mentioned in theFactTable.
+--  c. LocationTable: Finally, the LocationTable has 50 rows andf ollowsasimilar approach to ProductTable. It has four columns named AreaCode, State, Market, and Market Size.
+
+-- Create Database
+Create database questions;
+use questions;
+
+-- Create FactTable
+CREATE TABLE FactTable (
+    Date DATE,
+    ProductID INT,
+    Profit DECIMAL(10, 2),
+    Sales DECIMAL(10, 2),
+    Margin DECIMAL(10, 2),
+    COGS DECIMAL(10, 2),
+    TotalExpenses DECIMAL(10, 2),
+    Marketing DECIMAL(10, 2),
+    Inventory INT,
+    BudgetProfit DECIMAL(10, 2),
+    BudgetCOGS DECIMAL(10, 2),
+    BudgetMargin DECIMAL(10, 2),
+    BudgetSales DECIMAL(10, 2),
+    AreaCode INT
+);
+
+-- Insert more rows into FactTable
+INSERT INTO FactTable (Date, ProductID, Profit, Sales, Margin, COGS, TotalExpenses, Marketing, Inventory, BudgetProfit, BudgetCOGS, BudgetMargin, BudgetSales, AreaCode)
+VALUES
+('2024-01-03', 3, 200.00, 700.00, 300.00, 400.00, 500.00, 70.00, 150, 250.00, 350.00, 300.00, 800.00, 67890),
+('2024-01-04', 4, 250.00, 800.00, 350.00, 450.00, 550.00, 80.00, 200, 300.00, 400.00, 350.00, 900.00, 45678),
+('2024-01-05', 5, 300.00, 900.00, 400.00, 500.00, 600.00, 90.00, 250, 350.00, 450.00, 400.00, 1000.00, 23456),
+('2024-01-06', 6, 350.00, 1000.00, 450.00, 550.00, 650.00, 100.00, 300, 400.00, 500.00, 450.00, 1100.00, 78901),
+('2024-01-07', 7, 400.00, 1100.00, 500.00, 600.00, 700.00, 110.00, 350, 450.00, 550.00, 500.00, 1200.00, 56789),
+('2024-01-08', 8, 450.00, 1200.00, 550.00, 650.00, 750.00, 120.00, 400, 500.00, 600.00, 550.00, 1300.00, 34567),
+('2024-01-09', 9, 500.00, 1300.00, 600.00, 700.00, 800.00, 130.00, 450, 550.00, 650.00, 600.00, 1400.00, 12345),
+('2024-01-10', 10, 550.00, 1400.00, 650.00, 750.00, 850.00, 140.00, 500, 600.00, 700.00, 650.00, 1500.00, 90123),
+('2024-01-11', 11, 600.00, 1500.00, 700.00, 800.00, 900.00, 150.00, 550, 650.00, 750.00, 700.00, 1600.00, 67890),
+('2024-01-12', 12, 650.00, 1600.00, 750.00, 850.00, 950.00, 160.00, 600, 700.00, 800.00, 750.00, 1700.00, 45678);
+
+-- Create ProductTable
+CREATE TABLE ProductTable (
+    ProductType VARCHAR(50),
+    Product VARCHAR(50),
+    ProductID INT,
+    Type VARCHAR(50)
+);
+
+-- Insert initial 13 rows into ProductTable
+INSERT INTO ProductTable (ProductType, Product, ProductID, Type)
+VALUES
+('TypeA', 'Product1', 1, 'Regular'),
+('TypeA', 'Product2', 2, 'Regular'),
+('TypeA', 'Product3', 3, 'Regular'),
+('TypeA', 'Product4', 4, 'Regular'),
+('TypeB', 'Product5', 5, 'Regular'),
+('TypeB', 'Product6', 6, 'Regular'),
+('TypeB', 'Product7', 7, 'Regular'),
+('TypeC', 'Product8', 8, 'Regular'),
+('TypeC', 'Product9', 9, 'Regular'),
+('TypeC', 'Product10', 10, 'Regular'),
+('TypeD', 'Product11', 11, 'Regular'),
+('TypeD', 'Product12', 12, 'Regular'),
+('TypeD', 'Product13', 13, 'Regular');
+
+-- Create LocationTable
+CREATE TABLE LocationTable (
+    AreaCode INT,
+    State VARCHAR(50),
+    Market VARCHAR(50),
+    MarketSize VARCHAR(50)
+);
+
+-- Insert initial 156 rows into LocationTable
+-- Insert 50 additional rows into LocationTable
+INSERT INTO LocationTable (AreaCode, State, Market, MarketSize)
+VALUES
+(10003, 'Arizona', 'Urban', 'Medium'),
+(10004, 'Arkansas', 'Rural', 'Large'),
+(10005, 'California', 'Urban', 'Small'),
+(10006, 'Colorado', 'Urban', 'Large'),
+(10007, 'Connecticut', 'Rural', 'Medium'),
+(10008, 'Delaware', 'Urban', 'Small'),
+(10009, 'Florida', 'Urban', 'Large'),
+(10010, 'Georgia', 'Rural', 'Medium'),
+(10011, 'Hawaii', 'Urban', 'Small'),
+(10012, 'Idaho', 'Rural', 'Large'),
+(10013, 'Illinois', 'Urban', 'Medium'),
+(10014, 'Indiana', 'Urban', 'Small'),
+(10015, 'Iowa', 'Rural', 'Large'),
+(10016, 'Kansas', 'Urban', 'Medium'),
+(10017, 'Kentucky', 'Urban', 'Small'),
+(10018, 'Louisiana', 'Rural', 'Large'),
+(10019, 'Maine', 'Urban', 'Medium'),
+(10020, 'Maryland', 'Urban', 'Small'),
+(10021, 'Massachusetts', 'Rural', 'Large'),
+(10022, 'Michigan', 'Urban', 'Medium'),
+(10023, 'Minnesota', 'Urban', 'Small'),
+(10024, 'Mississippi', 'Rural', 'Large'),
+(10025, 'Missouri', 'Urban', 'Medium'),
+(10026, 'Montana', 'Urban', 'Small'),
+(10027, 'Nebraska', 'Rural', 'Large'),
+(10028, 'Nevada', 'Urban', 'Medium'),
+(10029, 'New Hampshire', 'Urban', 'Small'),
+(10030, 'New Jersey', 'Rural', 'Large'),
+(10031, 'New Mexico', 'Urban', 'Medium'),
+(10032, 'New York', 'Urban', 'Small'),
+(10033, 'North Carolina', 'Rural', 'Large'),
+(10034, 'North Dakota', 'Urban', 'Medium'),
+(10035, 'Ohio', 'Urban', 'Small'),
+(10036, 'Oklahoma', 'Rural', 'Large'),
+(10037, 'Oregon', 'Urban', 'Medium'),
+(10038, 'Pennsylvania', 'Urban', 'Small'),
+(10039, 'Rhode Island', 'Rural', 'Large'),
+(10040, 'South Carolina', 'Urban', 'Medium'),
+(10041, 'South Dakota', 'Urban', 'Small'),
+(10042, 'Tennessee', 'Rural', 'Large'),
+(10043, 'Texas', 'Urban', 'Medium'),
+(10044, 'Utah', 'Urban', 'Small'),
+(10045, 'Vermont', 'Rural', 'Large'),
+(10046, 'Virginia', 'Urban', 'Medium'),
+(10047, 'Washington', 'Urban', 'Small'),
+(10048, 'West Virginia', 'Rural', 'Large'),
+(10049, 'Wisconsin', 'Urban', 'Medium'),
+(10050, 'Wyoming', 'Urban', 'Small');
+
+-- Number of states present in the LocationTable:
+SELECT COUNT(DISTINCT State) AS Number_of_States
+FROM LocationTable;
+
+-- Number of products of regular type:
+SELECT COUNT(*) AS Regular_Product_Count
+FROM ProductTable
+WHERE Type = 'Regular';
+
+-- Spending done on marketing of product ID 1:
+SELECT SUM(Marketing) AS Total_Marketing_Spending
+FROM FactTable
+WHERE ProductID = 1;
+
+-- Minimum sales of a product:
+SELECT MIN(Sales) AS Minimum_Sales
+FROM FactTable;
+
+-- Maximum Cost of Goods Sold (COGS):
+SELECT MAX(COGS) AS Max_COGS
+FROM FactTable;
+
+-- Details of products where product type is coffee:
+	SELECT *
+FROM ProductTable
+WHERE ProductType = 'Coffee';
+
+-- Details where total expenses are greater than 40:
+SELECT *
+FROM FactTable
+WHERE TotalExpenses > 40;
+
+-- Average sales in area code 719:
+SELECT AVG(Sales) AS Average_Sales
+FROM FactTable
+WHERE AreaCode = 719;
+
+-- Total profit generated by Colorado state:
+SELECT SUM(Profit) AS Total_Profit_Colorado
+FROM FactTable f
+INNER JOIN LocationTable l ON f.AreaCode = l.AreaCode
+WHERE l.State = 'Colorado';
+
+-- Average inventory for each product ID:
+SELECT ProductID, AVG(Inventory) AS Average_Inventory
+FROM FactTable
+GROUP BY ProductID;
+
+-- State in sequential order in LocationTable:
+SELECT State
+FROM LocationTable
+ORDER BY State;
+
+-- Average budget of products where the average budget margin is greater than 100:
+SELECT AVG(Budget) AS Average_Budget
+FROM ProductTable
+WHERE ProductID IN (
+    SELECT ProductID
+    FROM FactTable
+    GROUP BY ProductID
+    HAVING AVG(BudgetMargin) > 100
+);
+
+-- Total sales done on date 2010-01-01:
+SELECT SUM(Sales) AS Total_Sales
+FROM FactTable
+WHERE Date = '2010-01-01';
+
+-- Average total expense of each product ID on an individual date:
+SELECT Date, ProductID, AVG(TotalExpenses) AS Average_Total_Expense
+FROM FactTable
+GROUP BY Date, ProductID;
+
+-- Table with specified attributes:
+SELECT f.Date, f.ProductID, p.ProductType, p.Product, f.Sales, f.Profit, l.State, l.AreaCode
+FROM FactTable f
+INNER JOIN ProductTable p ON f.ProductID = p.ProductID
+INNER JOIN LocationTable l ON f.AreaCode = l.AreaCode;
+
+-- Rank without gap to show sales-wise rank:
+SELECT *,
+       DENSE_RANK() OVER (ORDER BY Sales DESC) AS Sales_Rank
+FROM FactTable;
+
+-- State-wise profit and sales:
+SELECT l.State, SUM(f.Profit) AS Total_Profit, SUM(f.Sales) AS Total_Sales
+FROM FactTable f
+INNER JOIN LocationTable l ON f.AreaCode = l.AreaCode
+GROUP BY l.State;
+
+-- State-wise profit, sales, and product name:
+SELECT l.State, p.Product, SUM(f.Profit) AS Total_Profit, SUM(f.Sales) AS Total_Sales
+FROM FactTable f
+INNER JOIN LocationTable l ON f.AreaCode = l.AreaCode
+INNER JOIN ProductTable p ON f.ProductID = p.ProductID
+GROUP BY l.State, p.Product;
+
+-- Increase in sales of 5%:
+SELECT ProductID, Sales * 1.05 AS Increased_Sales
+FROM FactTable;
+
+-- Maximum profit along with product ID and product type:
+SELECT ProductID, ProductType, MAX(Profit) AS Max_Profit
+FROM FactTable;
+
+-- Stored procedure to fetch results according to product type:
+CREATE PROCEDURE FetchByProductType
+   ( @product_type VARCHAR(50))
+AS
+BEGIN
+    SELECT *
+    FROM ProductTable
+    WHERE Type = @product_type;
+END;
+
+-- Condition for profit or loss based on total expenses:
+SELECT *,
+       CASE
+           WHEN TotalExpenses < 60 THEN 'Profit'
+           ELSE 'Loss'
+       END AS Profit_Loss
+FROM FactTable;
+
+-- Total weekly sales value with date and product ID details using ROLLUP:
+SELECT Date, ProductID, SUM(Sales) AS Weekly_Sales
+FROM FactTable
+GROUP BY ROLLUP (Date, ProductID);
+
+-- Union and intersection operators on tables with attribute area code:
+-- Union
+SELECT AreaCode FROM Table1
+UNION
+SELECT AreaCode FROM Table2;
+
+-- Intersection
+SELECT AreaCode FROM Table1
+INTERSECT
+SELECT AreaCode FROM Table2;
+
+-- User-defined function to fetch a particular product type:
+CREATE FUNCTION GetProductByType (@product_type VARCHAR(50))
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT *
+    FROM ProductTable
+    WHERE Type = @product_type
+);
+
+-- Change product type from coffee to tea where product ID is 1 and undo it:
+-- Change product type to tea
+UPDATE ProductTable
+SET Type = 'Tea'
+WHERE ProductID = 1;
+
+-- Undo change
+UPDATE ProductTable
+SET Type = 'Coffee'
+WHERE ProductID = 1;
+
+-- Date, product ID, and sales where total expenses are between 100 to 200:
+SELECT Date, ProductID, Sales
+FROM FactTable
+WHERE TotalExpenses BETWEEN 100 AND 200;
+
+-- Delete records in ProductTable for regular type:
+DELETE FROM ProductTable WHERE Type = 'Regular';
+
+-- ASCII value of the fifth character from the column Product:
+SELECT ASCII(SUBSTRING(Product, 5, 1)) AS Fifth_Character_ASCII_Value FROM ProductTable;
+
+
+
